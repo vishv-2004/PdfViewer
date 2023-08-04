@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Viewer, Worker } from "@react-pdf-viewer/core";
 import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
-import {MdZoomInMap,MdZoomOutMap} from "react-icons/md"
+import { MdZoomInMap, MdZoomOutMap } from "react-icons/md";
 
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import "@react-pdf-viewer/default-layout/lib/styles/index.css";
@@ -31,12 +31,26 @@ const PDFUploaderViewer = () => {
   }, []);
 
   const toggleFullScreen = () => {
-    if (document.fullscreenElement) {
-      document.exitFullscreen();
-      setIsFullScreen(false);
-    } else {
-      document.documentElement.requestFullscreen();
-      setIsFullScreen(true);
+    try {
+      if (
+        document.fullscreenEnabled ||
+        document.webkitFullscreenEnabled ||
+        document.mozFullScreenEnabled ||
+        document.msFullscreenEnabled
+      ) {
+        if (document.fullscreenElement) {
+          document.exitFullscreen();
+          setIsFullScreen(false);
+        } else {
+          document.documentElement.requestFullscreen();
+          setIsFullScreen(true);
+        }
+      } else {
+        alert("We don't have permission FullScreen Mode ");
+      }
+    } catch (error) {
+      console.log("we don't have permission");
+      alert("We don't have permission FullScreen Mode");
     }
   };
 
@@ -44,8 +58,20 @@ const PDFUploaderViewer = () => {
     <div className="pdf-uploader-viewer">
       <div className="pdf-viewer pt-20 flex flex-col gap-5">
         {file && (
-          <button onClick={toggleFullScreen} className=" w-fit self-end px-7 py-2 bg-[#383CC1] text-white rounded-lg ">
-            {isFullScreen ? <div className="flex gap-2 bg-[] rounded-lg items-center "> <MdZoomInMap/> {"Exit Full Screen"} </div>  : <div className="flex gap-2 bg-[] rounded-lg items-center "><MdZoomOutMap/>  {"Full Screen"} </div> }
+          <button
+            onClick={toggleFullScreen}
+            className=" w-fit self-end px-7 py-2 bg-[#383CC1] text-white rounded-lg "
+          >
+            {isFullScreen ? (
+              <div className="flex gap-2 bg-[] rounded-lg items-center ">
+                {" "}
+                <MdZoomInMap /> {"Exit Full Screen"}{" "}
+              </div>
+            ) : (
+              <div className="flex gap-2 bg-[] rounded-lg items-center ">
+                <MdZoomOutMap /> {"Full Screen"}{" "}
+              </div>
+            )}
           </button>
         )}
 
